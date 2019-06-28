@@ -1,0 +1,4 @@
+Email,First Name,Last Name,Username,Password,Role,User Type,Track Viewer
+myemail@gmail.com,Jane,Doe,janedoe,password1,Viewer,Viewer,No
+myemail2@gmail.com,John,Doe,johndoe,password1,Viewer,Viewer,Yes
+myemail3@gmail.com,Bill,Doe,billdoe,password1,Viewer,Viewer,Yes
