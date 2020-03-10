@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - arcgis>=1.6.2
+  - pendulum=1.4.4
   - pip>=19.1.1
   - python=3.6.8
   - seaborn=0.9.0
