@@ -8,6 +8,7 @@ Several example Jupyter notebooks are provided to demonstrate some more advanced
 - [Basic Track Analysis](notebooks/examples/Basic%20Track%20Analysis.ipynb)
 - [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Location Tracking Status](notebooks/examples/Location%20Tracking%20Status.ipynb)
+- [Visualize Route Deviance](notebooks/examples/Visualize%20Route%20Deviance.ipynb)
 
 ### Instructions
 
@@ -37,7 +38,7 @@ Please see our [guidelines for contributing](https://github.com/esri/contributin
 
 ## Licensing
 
-Copyright 2019 Esri
+Copyright 2020 Esri
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
