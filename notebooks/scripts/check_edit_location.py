@@ -10,7 +10,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.​
    
-    This sample reports work orders that were edited or created while the user was not close by using Tracker data
+    This sample reports work orders (assignments, features, surveys) that were edited or created while the user was not close by using Tracker data
     You must be an admin in your organization to use this script
 """
 import argparse
@@ -85,16 +85,19 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
     else:
         logger.info("Please pass at least one worker user_id")
         sys.exit()
+    # These are the features whose corresponding editors we will check
     features_to_check = layer.query(where=layer_query_string, out_sr=3857).features
     if len(features_to_check) == 0:
         logger.info("No features found to check. Please check the user_id's that you have passed")
         sys.exit(0)
     
-    # Find invalid features
-    invalid_features = []
+    # Get field names, whether AGOL or Enterprise, to use
     accuracy_field = return_field_name(tracks_layer, name_to_check="horizontal_accuracy")
     creator_field = return_field_name(tracks_layer, name_to_check="created_user")
     timestamp_field = return_field_name(tracks_layer, name_to_check="location_timestamp")
+    
+    # Find invalid features
+    invalid_features = []
     logger.info("Finding invalid features")
     for feature in features_to_check:
         # Get coordinates of the assignment
@@ -106,6 +109,7 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
             sys.exit(0)
         # The date to check
         try:
+            # date field may not be populated
             if feature.attributes[field_name]:
                 date_to_check = datetime.datetime.utcfromtimestamp(feature.attributes[field_name] / 1000)
             else:
@@ -119,7 +123,7 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         start_date = date_to_check - datetime.timedelta(minutes=time_tolerance)
         end_date = date_to_check + datetime.timedelta(minutes=time_tolerance)
         
-        # Check there are actually tracks in your LTS in that time period
+        # Check there are actually tracks in your LTS in that time period. Otherwise, go to next feature
         check_track_query = "{} < '{}'".format(timestamp_field, end_date.strftime('%Y-%m-%d %H:%M:%S'))
         check_tracks = tracks_layer.query(where=check_track_query, return_count_only=True)
         if check_tracks == 0:
@@ -191,6 +195,8 @@ def main(arguments):
         logger.info(e)
         logger.info("Getting location tracking service failed - check that you are an admin and that location tracking is enabled for your organization")
         sys.exit(0)
+        
+    # Return invalid work orders
     workers = arguments.workers.split(",")
     invalid_work_orders = get_invalid_work_orders(layer,
                                                   arguments.field_name,
@@ -217,16 +223,16 @@ if __name__ == "__main__":
     parser.add_argument('-workers', dest='workers', help="Comma separated list of user_id's for the workers to check")
     parser.add_argument('-field-name', dest='field_name', default="EditDate",
                         help="The date field name within the Survey or Collector layer you use to integrate with Tracker. Use actual field name, not alias. Default is EditDate (for AGOL)")
-    parser.add_argument('-project-id', dest='project_id', help="The id of the project to delete assignments from",
+    parser.add_argument('-project-id', dest='project_id', help="The id of the project whose assignments must be verified",
                         default=None)
     parser.add_argument('-layer-url', dest='layer_url',
-                        help="The feature service URL for your Survey or Collector layer",
+                        help="The feature service URL for your Survey or Collector layer with features to be verified",
                         default=None)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to")
     parser.add_argument('-time-tolerance', dest='time_tolerance',
-                        help="The tolerance (in minutes) to check completion date vs location", type=int, default=10)
+                        help="The tolerance (in minutes) to check a given date field vs location", type=int, default=10)
     parser.add_argument('-distance-tolerance', dest='distance_tolerance', type=int, default=100,
-                        help='The distance tolerance to use (meters- based on SR of Assignments FL)')
+                        help='The distance tolerance to use (meters - based on SR of Assignments FL)')
     parser.add_argument('-min-accuracy', dest='min_accuracy', default=50,
                         help="The minimum accuracy to use (meters - based on SR of Assignments FL)")
     parser.add_argument('--skip-ssl-verification',
