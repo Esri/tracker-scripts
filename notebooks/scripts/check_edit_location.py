@@ -75,26 +75,25 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
     """
     # Query for all features last edited by a worker in your list
     logger.info("Querying for features edited by a worker in your list")
-    edit_field = return_field_name(layer, name_to_check="Editor")
+    editor_field = return_field_name(layer, name_to_check="Editor")
     layer_query_string = ""
     if workers:
         for worker in workers:
             if layer_query_string != "":
                 layer_query_string = layer_query_string + " OR "
-            layer_query_string = layer_query_string + "{} = '{}'".format(edit_field, worker)
+            layer_query_string = layer_query_string + f"{editor_field} = '{worker}'"
     else:
         logger.info("Please pass at least one worker user_id")
         sys.exit()
     # These are the features whose corresponding editors we will check
-    features_to_check = layer.query(where=layer_query_string, out_sr=3857).features
+    features_to_check = layer.query(where=layer_query_string, out_sr=3857, return_all_records=True).features
     if len(features_to_check) == 0:
         logger.info("No features found to check. Please check the user_id's that you have passed")
         sys.exit(0)
     
-    # Get field names, whether AGOL or Enterprise, to use
-    accuracy_field = return_field_name(tracks_layer, name_to_check="horizontal_accuracy")
-    creator_field = return_field_name(tracks_layer, name_to_check="created_user")
-    timestamp_field = return_field_name(tracks_layer, name_to_check="location_timestamp")
+    accuracy_field = "horizontal_accuracy"
+    creator_field = "created_user"
+    timestamp_field = "location_timestamp"
     
     # Find invalid features
     invalid_features = []
@@ -124,19 +123,18 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         end_date = date_to_check + datetime.timedelta(minutes=time_tolerance)
         
         # Check there are actually tracks in your LTS in that time period. Otherwise, go to next feature
-        check_track_query = "{} < '{}'".format(timestamp_field, end_date.strftime('%Y-%m-%d %H:%M:%S'))
+        check_track_query = f"{timestamp_field} < '{end_date.strftime('%Y-%m-%d %H:%M:%S')}'"
         check_tracks = tracks_layer.query(where=check_track_query, return_count_only=True)
         if check_tracks == 0:
             logger.info("For this feature, no tracks exist for the time period in your LTS. Ensure that tracks have been retained for the time period you're verifying")
             continue
         
         # Make a query string to select location by the worker during the time period
-        loc_query_string = "{} = '{}' AND {} >= '{}' AND {} <= '{}' AND {} <= {}" \
-            .format(creator_field, feature.attributes[edit_field],
-                    timestamp_field,
-                    start_date.strftime('%Y-%m-%d %H:%M:%S'), timestamp_field,
-                    end_date.strftime('%Y-%m-%d %H:%M:%S'), accuracy_field,
-                    min_accuracy)
+        loc_query_string = f"{creator_field} = '{feature.attributes[editor_field]}' " \
+            f"AND {timestamp_field} >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
+            f"AND {timestamp_field} <= '{end_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
+            f"AND {accuracy_field} <= {min_accuracy}" \
+
         # Query the feature layer
         locations_to_check = tracks_layer.query(where=loc_query_string, out_sr=3857, order_by_fields=timestamp_field + " ASC").features
         
@@ -178,23 +176,16 @@ def main(arguments):
 
     # Get the feature layer
     logger.info("Getting feature layer")
-    if arguments.project_id and arguments.layer_url:
-        logger.info("Please use either project id or layer url as your work order layer, not both")
-        sys.exit(0)
-    elif arguments.project_id:
-        item = gis.content.get(arguments.project_id)
-        layer = workforce.Project(item).assignments_layer
-    elif arguments.layer_url:
-        layer = FeatureLayer(arguments.layer_url)
+    layer = FeatureLayer(arguments.layer_url)
+    if arguments.tracks_layer_url:
+        tracks_layer = FeatureLayer(url=arguments.tracks_layer_url)
     else:
-        logger.info("Please provide either a portal id for your Workforce project or a feature service URL for your survey/collector layer")
-        sys.exit(0)
-    try:
-        tracks_layer = gis.admin.location_tracking.tracks_layer
-    except Exception as e:
-        logger.info(e)
-        logger.info("Getting location tracking service failed - check that you are an admin and that location tracking is enabled for your organization")
-        sys.exit(0)
+        try:
+            tracks_layer = gis.admin.location_tracking.tracks_layer
+        except Exception as e:
+            logger.info(e)
+            logger.info("Getting location tracking service failed - check that you are an admin and that location tracking is enabled for your organization")
+            sys.exit(0)
         
     # Return invalid work orders
     workers = arguments.workers.split(",")
@@ -223,11 +214,9 @@ if __name__ == "__main__":
     parser.add_argument('-workers', dest='workers', help="Comma separated list of user_id's for the workers to check")
     parser.add_argument('-field-name', dest='field_name', default="EditDate",
                         help="The date field name within the Survey or Collector layer you use to integrate with Tracker. Use actual field name, not alias. Default is EditDate (for AGOL)")
-    parser.add_argument('-project-id', dest='project_id', help="The id of the project whose assignments must be verified",
-                        default=None)
     parser.add_argument('-layer-url', dest='layer_url',
-                        help="The feature service URL for your Survey or Collector layer with features to be verified",
-                        default=None)
+                        help="The feature service URL for your Survey, Collector, or Workforce assignments feature layer with features to be verified",
+                        required=True)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to")
     parser.add_argument('-time-tolerance', dest='time_tolerance',
                         help="The tolerance (in minutes) to check a given date field vs location", type=int, default=10)
@@ -235,6 +224,8 @@ if __name__ == "__main__":
                         help='The distance tolerance to use (meters - based on SR of Assignments FL)')
     parser.add_argument('-min-accuracy', dest='min_accuracy', default=50,
                         help="The minimum accuracy to use (meters - based on SR of Assignments FL)")
+    parser.add_argument('-tracks-layer-url', dest='tracks_layer_url', default=None,
+                        help="The tracks layer (either location tracking service or tracks view) you'd like to use. Defaults to the Location Tracking Service tracks layer")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
                         action='store_true',
