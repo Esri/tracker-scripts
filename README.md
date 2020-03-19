@@ -3,19 +3,21 @@ A set of Python scripts and notebooks to help administer track views and analyze
 
 ### Features
 
-Several example Jupyter notebooks are provided to demonstrate some more advanced workflows that are possible via the ArcGIS API for Python and Tracker:
+Several example Jupyter notebooks and scripts are provided to demonstrate some more advanced workflows that are possible via the ArcGIS API for Python and Tracker:
 - [Quickstart Guide](notebooks/examples/Quickstart%20Guide.ipynb)
 - [Basic Track Analysis](notebooks/examples/Basic%20Track%20Analysis.ipynb)
 - [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Location Tracking Status](notebooks/examples/Location%20Tracking%20Status.ipynb)
 - [Visualize Route Deviance](notebooks/examples/Visualize%20Route%20Deviance.ipynb)
+- [Check Edit Location](scripts/check_edit_location.py)
+
 
 ### Instructions
 
 1. Install [Anaconda](https://www.anaconda.com/distribution)
 2. Run `conda env create --file environment.yml` to create the virtual environment with the correct dependencies
 3. Run `conda activate tracker-scripts` to activate the environment
-4. Start the jupyter server using `jupyter notebook`
+4. Start the jupyter server using `jupyter notebook` or run the Python script from command line
 5. Open the notebook, modify it, and then it run it
 
 ### Requirements
