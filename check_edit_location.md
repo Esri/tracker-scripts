@@ -5,6 +5,8 @@ It reports features where the user might not have visited to the log file or sta
 
 For example, an admin may use this script to verify whether or not a user was nearby when they completed a Workforce assignment by passing the "completedDate" field and assignments feature layer into the script. 
 
+Location Tracking must be enabled for your organization to use this script. You must be either an admin or a track viewer who can view the tracks of each worker whose work you'd like to verify in order to use this script.
+
 Supports Python 3.6+
 
 ----
@@ -17,6 +19,7 @@ Other than the authentication arguments (username, password, org) the script use
 - -time-tolerance \<timeTol\> - The time tolerance to use when checking workers locations. This value is used to provide a range around the time when the assignment was completed (optional - defaults to 10 minutes)
 - -distance-tolerance \<distTol\> - The distance tolerance to use when checking if a worker completed the assignment at the assignment location (optional - defaults to 100 (m)). The units are in meters.
 - -min-accuracy \<minAccuracy\> - The minimum accuracy required when querying worker locations (optional - defaults to 50 (m)). The units are in meters.
+- -tracks-layer-url \<tracks_layer_url\> - The URL to the track view layer you want to utilize (optional - defaults to the tracks layer in your location tracking service)
 - -log-file \<logFile\> The log file to use for logging messages
 
 Example Usage:
