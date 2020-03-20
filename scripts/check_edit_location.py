@@ -124,7 +124,7 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         check_worker_tracks_query = f"{timestamp_field} < timestamp '{end_date.strftime('%Y-%m-%d %H:%M:%S')}' AND {creator_field} = '{row[editor_field]}' "
         check_worker_tracks = tracks_layer.query(where=check_worker_tracks_query, return_count_only=True)
         if check_worker_tracks == 0:
-            logger.info(f"The worker who edited this feature, {row[editor_field]}, does not have tracks that are this old")
+            logger.info(f"The worker {row[editor_field]} who edited the feature {row[object_id_field]} does not have tracks for this time period")
             continue
         
         # Make a query string to select location by the worker during the time period
