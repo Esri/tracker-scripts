@@ -114,7 +114,7 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         end_date = date_to_check + datetime.timedelta(minutes=time_tolerance)
         
         # Check there are actually tracks in your LTS in that time period. Otherwise, go to next feature
-        check_track_query = f"{timestamp_field} < '{end_date.strftime('%Y-%m-%d %H:%M:%S')}'"
+        check_track_query = f"{timestamp_field} < timestamp '{end_date.strftime('%Y-%m-%d %H:%M:%S')}'"
         check_tracks = tracks_layer.query(where=check_track_query, return_count_only=True)
         if check_tracks == 0:
             logger.info("For this feature, no tracks exist for the time period in your LTS. Ensure that tracks have been retained for the time period you're verifying")
