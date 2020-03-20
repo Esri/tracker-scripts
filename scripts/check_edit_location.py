@@ -122,14 +122,14 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         
         # Make a query string to select location by the worker during the time period
         loc_query_string = f"{creator_field} = '{row[editor_field]}' " \
-            f"AND {timestamp_field} >= '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
-            f"AND {timestamp_field} <= '{end_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
+            f"AND {timestamp_field} >= timestamp '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
+            f"AND {timestamp_field} <= timestamp '{end_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
             f"AND {accuracy_field} <= {min_accuracy}" \
 
         # Generate geometry filter, query the feature layer
         geom_filter = arcgis.geometry.filters.intersects(row['BUFFERED'], sr=sr)
-        tracks_within_buffer = tracks_layer.query(where=loc_query_string, geometry_filter=geom_filter, out_sr=sr).features
-        if len(tracks_within_buffer) == 0:
+        tracks_within_buffer = tracks_layer.query(where=loc_query_string, geometry_filter=geom_filter, return_count_only=True)
+        if tracks_within_buffer == 0:
             invalid_features.append(row[object_id_field])
     return invalid_features
 
@@ -189,13 +189,13 @@ if __name__ == "__main__":
     parser.add_argument('-layer-url', dest='layer_url',
                         help="The feature service URL for your Survey, Collector, or Workforce assignments feature layer with features to be verified",
                         required=True)
-    parser.add_argument('-log-file', dest='log_file', help="The log file to write to")
+    parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('-time-tolerance', dest='time_tolerance',
                         help="The tolerance (in minutes) to check a given date field vs location", type=int, default=10)
     parser.add_argument('-distance-tolerance', dest='distance_tolerance', type=int, default=100,
-                        help='The distance tolerance to use (meters - based on SR of Assignments FL)')
+                        help='The distance tolerance to use (in meters)')
     parser.add_argument('-min-accuracy', dest='min_accuracy', default=50,
-                        help="The minimum accuracy to use (meters - based on SR of Assignments FL)")
+                        help="The minimum accuracy to use (in meters)")
     parser.add_argument('-tracks-layer-url', dest='tracks_layer_url', default=None,
                         help="The tracks layer (either location tracking service or tracks view) you'd like to use. Defaults to the Location Tracking Service tracks layer")
     parser.add_argument('--skip-ssl-verification',

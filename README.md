@@ -9,7 +9,7 @@ Several example Jupyter notebooks and scripts are provided to demonstrate some m
 - [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Location Tracking Status](notebooks/examples/Location%20Tracking%20Status.ipynb)
 - [Visualize Route Deviance](notebooks/examples/Visualize%20Route%20Deviance.ipynb)
-- [Check Edit Location](scripts/check_edit_location.py)
+- [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
 
 
 ### Instructions
