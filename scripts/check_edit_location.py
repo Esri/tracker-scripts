@@ -119,6 +119,13 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         if check_tracks == 0:
             logger.info("For this feature, no tracks exist for the time period in your LTS. Ensure that tracks have been retained for the time period you're verifying")
             continue
+            
+        # Check worker has tracks for that time period
+        check_worker_tracks_query = f"{timestamp_field} < timestamp '{end_date.strftime('%Y-%m-%d %H:%M:%S')}' AND {creator_field} = '{row[editor_field]}' "
+        check_worker_tracks = tracks_layer.query(where=check_worker_tracks_query, return_count_only=True)
+        if check_worker_tracks == 0:
+            logger.info(f"The worker who edited this feature, {row[editor_field]}, does not have tracks that are this old")
+            continue
         
         # Make a query string to select location by the worker during the time period
         loc_query_string = f"{creator_field} = '{row[editor_field]}' " \
@@ -129,8 +136,9 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         # Generate geometry filter, query the feature layer
         geom_filter = arcgis.geometry.filters.intersects(row['BUFFERED'], sr=sr)
         tracks_within_buffer = tracks_layer.query(where=loc_query_string, geometry_filter=geom_filter, return_count_only=True)
+        # each element of the list is a list with two elements - user_id and object_id
         if tracks_within_buffer == 0:
-            invalid_features.append(row[object_id_field])
+            invalid_features.append([row[editor_field], row[object_id_field]])
     return invalid_features
 
 
@@ -173,7 +181,7 @@ def main(arguments):
         logger.info("No features found that match the criteria you've set")
     else:
         for work_order in invalid_work_orders:
-            logger.info(f"The user who last edited the feature with OBJECTID {work_order} was potentially not within the distance tolerance when updating the field {arguments.field_name}")
+            logger.info(f"The user {work_order[0]} who last edited the feature with OBJECTID {work_order[1]} was potentially not within the distance tolerance when updating the field {arguments.field_name}")
 
     
 if __name__ == "__main__":
