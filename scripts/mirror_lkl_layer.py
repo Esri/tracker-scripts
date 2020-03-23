@@ -75,7 +75,8 @@ def main(arguments):
         if arguments.lkl_layer_url:
             lkl_layer = FeatureLayer(url=arguments.lkl_layer_url)
         else:
-            lkl_layer = gis.admin.location_tracking.last_known_locations_layer
+            logger.info("Please pass an LKL layer url!")
+            sys.exit(0)
             
         # Query LKL and mirror layer
         lkl_fset = lkl_layer.query('1=1', out_sr=3857)
@@ -115,8 +116,8 @@ if __name__ == "__main__":
     # Parameters for tracker
     parser.add_argument('-item-id', dest='item_id', required=True,
                         help="The item id of the layer you want the tracks to mirror to")
-    parser.add_argument('-lkl-layer-url', dest='lkl_layer_url', default=None,
-                        help="The last known location (LKL) layer (either location tracking service or tracks view) you'd like to use. Defaults to the Location Tracking Service LKL layer")
+    parser.add_argument('-lkl-layer-url', dest='lkl_layer_url', required=True,
+                        help="The last known location (LKL) layer (either location tracking service or tracks view) you'd like to use. This URL should end in /1")
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
