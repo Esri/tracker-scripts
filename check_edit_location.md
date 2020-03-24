@@ -24,12 +24,12 @@ Other than the authentication arguments (username, password, org) the script use
 
 Example Usage 1  - Check whether the three workers (admin_tracker, user_james, and user_aaron) were within 100 meters of the assignment location any time in the 10 minutes before and 10 minutes after the assignment was completed:
 ```python
-python check_completion_location.py -u username -p password -org https://.arcgis.com -workers admin_tracker,user_james,user_aaron -field-name completedDate -time-tolerance 10 -distance-tolerance 100 -layer-url https://services.arcgis.com/a910db6b36ff4066a3d4131fccc3da9b/arcgis/rest/services/assignments_ad9af2fc00314fa79ce79ec7d7317acc/FeatureServer/0
+python check_completion_location.py -u username -p password -org https://arcgis.com -workers admin_tracker,user_james,user_aaron -field-name completedDate -time-tolerance 10 -distance-tolerance 100 -layer-url https://services.arcgis.com/a910db6b36ff4066a3d4131fccc3da9b/arcgis/rest/services/assignments_ad9af2fc00314fa79ce79ec7d7317acc/FeatureServer/0
 ```
 
 Example Usage 2 - Check whether the worker user_aaron, whose tracks lie within the Track View provided, was within 300 meters of a Collector feature he created any time within 3 minutes of creating the feature.
 ```python
-python check_completion_location.py -u username -p password -org https://.arcgis.com -workers user_aaron -field-name CreationDate -time-tolerance 3 -distance-tolerance 300 -layer-url https://services.arcgis.com/a910db6b36ff4066a3d4131fccc3da9b/arcgis/rest/services/a14fa79ce79ec7d7317acc/FeatureServer/0 -tracks-layer-url https://locationservicesdev.arcgis.com/US6xjA1Nd8bW1aoA/arcgis/rest/services/5bfd7a0a1b6d4b698df17af205b8dbef_Track_View/FeatureServer/0
+python check_completion_location.py -u username -p password -org https://arcgis.com -workers user_aaron -field-name CreationDate -time-tolerance 3 -distance-tolerance 300 -layer-url https://services.arcgis.com/a910db6b36ff4066a3d4131fccc3da9b/arcgis/rest/services/a14fa79ce79ec7d7317acc/FeatureServer/0 -tracks-layer-url https://locationservicesdev.arcgis.com/US6xjA1Nd8bW1aoA/arcgis/rest/services/5bfd7a0a1b6d4b698df17af205b8dbef_Track_View/FeatureServer/0
 ```
 
 ## What it does
