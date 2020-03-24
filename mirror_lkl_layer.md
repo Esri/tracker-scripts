@@ -6,20 +6,20 @@ As of April 2020, the LKL layer does not support dynamic joins, so the mirroring
 
 This script is designed to be run as a scheduled task, at whatever frequency you want to get updated LKL data from your Location Tracking layer. For example, the admin may set up this script to run every 10 minutes in order to get the latest data from the field.
 
-For information on how to set up scheduled tasks, please see: https://www.esri.com/arcgis-blog/products/arcgis-pro/analytics/schedule-a-python-script-or-model-to-run-at-a-prescribed-time-2019-update/
+For information on how to set up scheduled tasks, please see [this article](https://www.esri.com/arcgis-blog/products/arcgis-pro/analytics/schedule-a-python-script-or-model-to-run-at-a-prescribed-time-2019-update/)
 
-and https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/
+and [this article](https://www.esri.com/arcgis-blog/products/product/analytics/scheduling-a-python-script-or-model-to-run-at-a-prescribed-time/)
 
-This script requires the use of a point layer that the data can be mirrored into. This layer would ideally share all the same fields as a standard LKL layer, but could have less fields if all data is not requred. You can clone your Location Tracking Service (LTS) or Location Tracking View (LTV) using the `clone_items` functionality in the Python API.
+This script requires the use of a point layer that the data can be mirrored into. This layer would ideally share all the same fields as a standard LKL layer, but could have less fields if all data is not requred. You can clone your Location Tracking Service (LTS) using the `clone_items` functionality in the Python API.
 
 To clone, do:
 
 ```python
 import arcgis
 gis = arcgis.gis.GIS("https://arcgis.com","myusername","mypassword")
-item = gis.content.get("item_id_of_your_LTS/LTV")
+item = gis.content.get(gis.properties["helperServices"]["locationTracking"]["id"])
 cloned_item = gis.content.clone_items([item], copy_data=False)[0]
-# delete Tracks layer from your cloned feature layer collection
+# delete Tracks layer from your cloned feature layer collection, so that you're left with only the LKL layer
 arcgis.features.FeatureLayerCollection(url=cloned_item.url, gis=gis).manager.delete_from_definition({ "layers" : [{"id" : 0}]})
 ```
 

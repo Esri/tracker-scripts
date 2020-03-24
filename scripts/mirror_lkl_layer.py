@@ -89,14 +89,11 @@ def main(arguments):
         update_features = []
         logger.info("Iterating through current LKL data")
         for feature in lkl_fset:
-            found = False
             for mirror_feature in mirror_fset:
                 # use "in" instead of == comparison due to the potential for brackets to be in the GUID field
                 if mirror_feature.attributes[return_field_name(mirror_layer, "global_id")].lower() in feature.attributes["globalid"].lower():
-                    found = True
+                    update_features.append(feature)
                     break
-            if found:
-                update_features.append(feature)
             else:
                 add_features.append(feature)
                 
