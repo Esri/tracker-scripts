@@ -29,7 +29,35 @@ Create a blank point layer (Content > Create > Feature Layer > Build a layer > P
 
 Location Tracking must be enabled for your organization to use this script. You must be either at least a track viewer in order to use this script.
 
+In addition, the user may want to use Python to perform the join itself. While this is not supported in the script, you can perform a left join relatively easily using the Pandas library. 
+Let's take an example where the we're joining LKL data to the last survey submitted by a user. The join will be on the "Creator" field in each service.
+
+1. Add extra fields into your layer cloned from above to support the fields from the joined layer
+2. After the applyEdits call has been made in the script (line 101, `mirror_layer.edit_features`), re-query the layer and store it as a sdf - `mirror_layer.query('1=1').sdf`
+3. Get Survey123 layer - `surveys = gis.content.get('survey_123_id')` and convert to an SDF `S123_SDF = surveys.layers[0].query(where='1=1').sdf`
+4. Get most recent surveys submitted by each user - `mostRecentSurveys = S123_SDF[S123_SDF.groupby(['Creator'])['CreationDate'].transform(max) == S123_SDF['CreationDate']]`
+5. Use pandas to perform a left join on the two SDFs - `overlap_rows = pandas.merge(left = LKL_SDF, right = mostRecentSurveys, how='left', left_on='created_user', right_on='Creator')`
+6. For each user in the joined data, find its corresponding feature and append attributes. Then re-post the data:
+```python
+updated_features = []
+features = mirror_layer.query('1=1').features
+for feature in features:
+    # return row with matching created_user
+    merged_row = overlap_rows.loc[overlap_rows['created_user'] == feature.attributes['created_user']]
+    # try to update a field "Status", if fails assign not updated
+    try:
+        feature.attributes['Status'] = merged_row['Status'].values[0]
+    except IndexError:
+        feature.attributes['Status'] = "Not Reported"
+    # repeat this for every field you want to update
+    updated_features.append(feature)
+# post features with joined data over    
+updates = mirror_layer.edit_features(updates=updated_features)
+```
+
+
 Supports Python 3.6+
+
 
 ----
 
