@@ -93,7 +93,7 @@ def main(arguments):
             body = body + f"As of {pendulum.from_timestamp(result.attributes['last_edited_date'] / 1000)}, the user {result.attributes['created_user']} is in the area that is {args.distance_tolerance} meters around ({args.latitude},{args.longitude})\n"
         subject = str(users)[1: -1] + " in geofence"
         yag.send(to=recipient_emails, subject=subject, contents=body)
-        ogger.info("Email sent")
+        logger.info("Email sent")
     else:
         logger.info("No users in the geofence")
     logger.info("Completed!")
