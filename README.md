@@ -3,12 +3,17 @@ A set of Python scripts and notebooks to help administer track views and analyze
 
 ### Features
 
-Several example Jupyter notebooks and scripts are provided to demonstrate some more advanced workflows that are possible via the ArcGIS API for Python and Tracker:
+Several example Jupyter notebooks and scripts are provided to demonstrate some more advanced workflows that are possible via the ArcGIS API for Python and Tracker.
+
+Notebooks:
 - [Quickstart Guide](notebooks/examples/Quickstart%20Guide.ipynb)
 - [Basic Track Analysis](notebooks/examples/Basic%20Track%20Analysis.ipynb)
-- [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Location Tracking Status](notebooks/examples/Location%20Tracking%20Status.ipynb)
+- [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Visualize Route Deviance](notebooks/examples/Visualize%20Route%20Deviance.ipynb)
+- [Identify Inspected Buildings](notebooks/examples/Identify%20Inspected%20Buildings.ipynb)
+
+Scripts:
 - [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
 - [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](mirror_lkl_layer.md)
 
