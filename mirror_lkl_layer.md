@@ -4,6 +4,8 @@ This script will copy data from a Last Known Locations (LKL) layer in a Location
 
 As of April 2020, the LKL layer does not support dynamic joins, so the mirroring of data using this script may be useful if the user is trying to relate additional data to their last known locations data. Standard feature services support join features.
 
+Please see the code block below if attempting to use this script in Enterprise.
+
 This script is designed to be run as a scheduled task, at whatever frequency you want to get updated LKL data from your Location Tracking layer. For example, the admin may set up this script to run every 10 minutes in order to get the latest data from the field.
 
 For information on how to set up scheduled tasks, please see [this article](https://www.esri.com/arcgis-blog/products/arcgis-pro/analytics/schedule-a-python-script-or-model-to-run-at-a-prescribed-time-2019-update/)
@@ -29,16 +31,25 @@ Create a blank point layer (Content > Create > Feature Layer > Build a layer > P
 
 Location Tracking must be enabled for your organization to use this script. You must be either at least a track viewer in order to use this script.
 
-In addition, the user may want to use Python to perform the join itself. While this is not supported in the script, you can perform a left join relatively easily using the Pandas library. 
-Let's take an example where the we're joining LKL data to the last survey submitted by a user. The join will be on the "Creator" field in each service.
+In addition, the user may want to use Python to perform the join itself. While we recommend you use the "Export results of the Join features analysis tool as a hosted feature layer view" option while using AGOL (info about that can be found [here](https://www.esri.com/arcgis-blog/products/arcgis-online/mapping/visualizing-related-data-with-join-features-in-arcgis-online/)), Enterprise does not support this feature as of 10.8. While joining is not supported in the script out of the box, you can easily modify it and perform a left join using the Pandas library. 
 
+Let's take an example where the we're joining LKL data to an external layer with a 1:1 relationship. This feature service will store the "Status" of each worker. The join will be on the "Creator" field in each service.
 1. Add extra fields into your layer cloned from above to support the fields from the joined layer
-2. After the applyEdits call has been made in the script (line 101, `mirror_layer.edit_features`), re-query the layer and store it as a sdf - `mirror_layer.query('1=1').sdf`
-3. Get Survey123 layer - `surveys = gis.content.get('survey_123_id')` and convert to an SDF `S123_SDF = surveys.layers[0].query(where='1=1').sdf`
-4. Get most recent surveys submitted by each user - `mostRecentSurveys = S123_SDF[S123_SDF.groupby(['Creator'])['CreationDate'].transform(max) == S123_SDF['CreationDate']]`
-5. Use pandas to perform a left join on the two SDFs - `overlap_rows = pandas.merge(left = LKL_SDF, right = mostRecentSurveys, how='left', left_on='created_user', right_on='Creator')`
-6. For each user in the joined data, find its corresponding feature and append attributes. Then re-post the data:
+2. After the applyEdits call has been made in the script (line 101, `mirror_layer.edit_features`), re-query the layer and store it as a sdf
+3. Get external layer and convert to an SDF
+4. Get most recent surveys submitted by each user 
+5. Use pandas to perform a left join on the two SDFs
+6. For each user in the joined data, find its corresponding feature and append attributes. Then re-post the data. 
+
+Our code looks something like
 ```python
+# convert LKL to sdf
+LKL_SDF = mirror_layer.query('1=1').sdf
+status_layer_item = gis.content.get('status_layer_id')
+# get SDF of your extenral layer
+status_SDF = status_layer_item.layers[0].query(where='1=1').sdf
+# perform merge
+overlap_rows = pandas.merge(left = LKL_SDF, right = status_SDF, how='left', left_on='created_user', right_on='Creator')
 updated_features = []
 features = mirror_layer.query('1=1').features
 for feature in features:
@@ -55,9 +66,7 @@ for feature in features:
 updates = mirror_layer.edit_features(updates=updated_features)
 ```
 
-
 Supports Python 3.6+
-
 
 ----
 
