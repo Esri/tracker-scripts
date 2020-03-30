@@ -44,12 +44,12 @@ Let's take an example where the we're joining LKL data to an external layer with
 Our code looks something like
 ```python
 # convert LKL to sdf
-LKL_SDF = mirror_layer.query('1=1').sdf
+lkl_sdf = mirror_layer.query('1=1', as_df=True)
 status_layer_item = gis.content.get('status_layer_id')
 # get SDF of your extenral layer
-status_SDF = status_layer_item.layers[0].query(where='1=1').sdf
+status_sdf = status_layer_item.layers[0].query(where='1=1', as_df=True)
 # perform merge
-overlap_rows = pandas.merge(left = LKL_SDF, right = status_SDF, how='left', left_on='created_user', right_on='Creator')
+overlap_rows = pandas.merge(left = lkl_sdf, right = status_sdf, how='left', left_on='created_user', right_on='Creator')
 updated_features = []
 features = mirror_layer.query('1=1').features
 for feature in features:
