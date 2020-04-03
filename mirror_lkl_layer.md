@@ -22,12 +22,17 @@ gis = arcgis.gis.GIS("https://arcgis.com","myusername","mypassword")
 item = gis.content.get(gis.properties["helperServices"]["locationTracking"]["id"])
 cloned_item = gis.content.clone_items([item], copy_data=False)[0]
 # delete Tracks layer from your cloned feature layer collection, so that you're left with only the LKL layer
-arcgis.features.FeatureLayerCollection(url=cloned_item.url, gis=gis).manager.delete_from_definition({ "layers" : [{"id" : 0}]})
+flc = arcgis.features.FeatureLayerCollection(url=cloned_item.url, gis=gis)
+flc.manager.delete_from_definition({ "layers" : [{"id" : 0}]})
+# remove editor tracking on the layer
+flc.manager.update_definition({"editorTrackingInfo":{"enableEditorTracking":"false","enableOwnershipAccessControl":"false","allowOthersToUpdate":"true","allowOthersToDelete":"true","allowOthersToQuery":"true","allowAnonymousToUpdate":"true","allowAnonymousToDelete":"true"}})
+
 ```
+This will create a standard feature service in your organization whose item id you can pass. Note that this will turn off some of the security considerations in your LKL data.
 
-This will create a standard feature service in your organization whose item id you can pass. If you wish, you can also:
+If you wish, you can also:
 
-Create a blank point layer (Content > Create > Feature Layer > Build a layer > Points) and then add your requisite fields to that layer. Ensure the field_name value is the same, not just the alias.
+Create a blank point layer (Content > Create > Feature Layer > Build a layer > Points) and then add your requisite fields to that layer. Ensure the field_name value is the same, not just the alias. Ensure you create an extra field named "created_user" if you take this approach
 
 Location Tracking must be enabled for your organization to use this script. You must be either at least a track viewer in order to use this script.
 
