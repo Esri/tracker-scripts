@@ -16,6 +16,7 @@ Notebooks:
 Scripts:
 - [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
 - [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](mirror_lkl_layer.md)
+- [Polygon Cleanup Tracks](scripts/polygon_cleanup_tracks.py) - [README here](polygon_cleanup_tracks.md)
 
 
 ### Instructions
