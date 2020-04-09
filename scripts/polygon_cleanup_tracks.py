@@ -14,7 +14,6 @@
     Requires being an admin to run this script
 """
 import argparse
-from distutils.util import strtobool
 import logging
 import logging.handlers
 import traceback
@@ -86,17 +85,17 @@ def main(arguments):
         logger.info("Layer could not be found based on given input. Please check your parameters again. Exiting the script")
         sys.exit(0)
     
-    features = layer.query(where=args.where, out_sr=4326).features
+    features = layer.query(where=args.where, out_sr=3857).features
     if len(features) > 0:
         geometries = [feature.geometry for feature in features]
         logger.info("Unifying geometry data")
-        union_geometry = geometry.union(spatial_ref=4326,geometries=geometries,gis=gis)
-        if not strtobool(args.inside):
+        union_geometry = geometry.union(spatial_ref=3857,geometries=geometries,gis=gis)
+        if args.symmetric_difference:
             union_geometry['rings'] = inverse_geometry(union_geometry['rings'])
-        intersect_filter = geometry.filters.intersects(union_geometry, sr=4326)
+        intersect_filter = geometry.filters.intersects(union_geometry, sr=3857)
         logger.info("Querying features")
         x = tracks_layer.delete_features(geometry_filter=intersect_filter)
-        logger.info("Deleted: " + str(x))
+        logger.info("Deleted: " + str(len(x['deleteResults'])) + "tracks")
         logger.info("Completed!")
     
     
@@ -112,7 +111,7 @@ if __name__ == "__main__":
                         help="The feature service URL for your layer with the geometry you want to use to delete track points",
                         required=True)
     parser.add_argument('-where', dest='where', help="Query conditions for polygons you want to use in your cleanup. Defaults to all (1=1)", default="1=1")
-    parser.add_argument('-delete-inside', dest='inside', help="If true, delete the tracks inside the polygon. If false, delete the tracks outside the polygon", required=True)
+    parser.add_argument('--symmetric-difference', action='store_true', dest='symmetric_difference', help="If provided, delete the tracks outside the polygon(s). If not provided, delete the tracks inside the polygon")
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
