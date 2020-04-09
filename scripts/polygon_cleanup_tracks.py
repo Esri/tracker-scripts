@@ -14,6 +14,7 @@
     Requires being an admin to run this script
 """
 import argparse
+from distutils.util import strtobool
 import logging
 import logging.handlers
 import traceback
@@ -51,6 +52,12 @@ def initialize_logging(log_file=None):
     return logger
 
 
+def inverse_geometry(rings):
+    for ring in rings:
+        ring.reverse()
+    return rings
+
+
 def main(arguments):
     # initialize logger
     logger = initialize_logging(arguments.log_file)
@@ -82,11 +89,15 @@ def main(arguments):
     features = layer.query(where=args.where, out_sr=4326).features
     if len(features) > 0:
         geometries = [feature.geometry for feature in features]
+        logger.info("Unifying geometry data")
         union_geometry = geometry.union(spatial_ref=4326,geometries=geometries,gis=gis)
+        if not strtobool(args.inside):
+            union_geometry['rings'] = inverse_geometry(union_geometry['rings'])
         intersect_filter = geometry.filters.intersects(union_geometry, sr=4326)
-        if args.inside:
-            tracks_layer.delete_features(geometry_filter=intersect_filter)
-        print("Completed!")
+        logger.info("Querying features")
+        x = tracks_layer.delete_features(geometry_filter=intersect_filter)
+        logger.info("Deleted: " + str(x))
+        logger.info("Completed!")
     
     
 if __name__ == "__main__":
@@ -101,7 +112,7 @@ if __name__ == "__main__":
                         help="The feature service URL for your layer with the geometry you want to use to delete track points",
                         required=True)
     parser.add_argument('-where', dest='where', help="Query conditions for polygons you want to use in your cleanup. Defaults to all (1=1)", default="1=1")
-    parser.add_argument('-delete-inside', dest='inside', type=bool, help="If true, delete the tracks inside the polygon. If false, delete the tracks outside the polygon", required=True)
+    parser.add_argument('-delete-inside', dest='inside', help="If true, delete the tracks inside the polygon. If false, delete the tracks outside the polygon", required=True)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
