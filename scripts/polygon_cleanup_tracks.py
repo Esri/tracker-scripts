@@ -51,9 +51,11 @@ def initialize_logging(log_file=None):
     return logger
 
 
-def inverse_geometry(rings):
+def form_donut(rings):
     for ring in rings:
         ring.reverse()
+    # append the max extent as the clockwise outside ring
+    rings.append([[-20037508.3427892, -20037508.3427892], [-20037508.3427892, 20037508.3427892], [20037508.3427892, 20037508.3427892], [20037508.3427892, -20037508.3427892], [-20037508.3427892, -20037508.3427892]])
     return rings
 
 
@@ -91,11 +93,12 @@ def main(arguments):
         logger.info("Unifying geometry data")
         union_geometry = geometry.union(spatial_ref=3857,geometries=geometries,gis=gis)
         if args.symmetric_difference:
-            union_geometry['rings'] = inverse_geometry(union_geometry['rings'])
+            union_geometry['rings'] = form_donut(union_geometry['rings'])
         intersect_filter = geometry.filters.intersects(union_geometry, sr=3857)
         logger.info("Querying features")
         x = tracks_layer.delete_features(geometry_filter=intersect_filter)
-        logger.info("Deleted: " + str(len(x['deleteResults'])) + "tracks")
+        logger.info("Deleting features")
+        logger.info("Deleted: " + str(len(x['deleteResults'])) + " tracks")
         logger.info("Completed!")
     
     
