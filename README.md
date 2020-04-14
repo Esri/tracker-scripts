@@ -12,6 +12,7 @@ Notebooks:
 - [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Visualize Route Deviance](notebooks/examples/Visualize%20Route%20Deviance.ipynb)
 - [Identify Inspected Buildings](notebooks/examples/Identify%20Inspected%20Buildings.ipynb)
+- [Find Dwell Times at Polygons](notebooks/examples/Find%20Dwell%20Times%20at%20Polygons.ipynb)
 
 Scripts:
 - [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
