@@ -26,7 +26,6 @@ from arcgis.gis import GIS
 from arcgis.features import FeatureLayer
 
 
-
 def initialize_logging(log_file=None):
     """
     Setup logging
@@ -55,12 +54,6 @@ def initialize_logging(log_file=None):
     return logger
 
 
-def return_field_name(layer, name_to_check):
-    for field in layer.properties.fields:
-        if field['name'].replace("_", "").lower() == name_to_check.replace("_", "").lower():
-            return field['name']
-
-
 def main(arguments):
     # initialize logger
     logger = initialize_logging(arguments.log_file)
@@ -87,6 +80,7 @@ def main(arguments):
                 "Getting location tracking service failed - check that you are an admin and that location tracking is enabled for your organization")
             sys.exit(0)
     
+    logger.info("Building query")
     tracks_query = ""
     if args.start_date:
         local_start_date = pendulum.from_format(args.start_date, "MM/DD/YYYY hh:mm:ss", tz=args.timezone,formatter='alternative').in_tz('UTC').format("%Y-%m-%d %H:%M:%S")
@@ -99,6 +93,7 @@ def main(arguments):
             tracks_query = tracks_query + " AND "
         tracks_query = tracks_query + f"location_timestamp < TIMESTAMP '{local_end_date}'"
     
+    logger.info("Querying tracks layer")
     polygon_features = layer.query(where=args.where, out_sr=3857)
     for feature in polygon_features:
         if args.workers:
@@ -109,10 +104,19 @@ def main(arguments):
                     tracks_query = tracks_query + " AND "
                 tracks_query = tracks_query + f"created_user = '{worker}'"
         intersect_filter = arcgis.geometry.filters.intersects(geometry=feature.geometry, sr=3857)
-        intersect_features = tracks_layer.query(where=tracks_query, geometry_filter=intersect_filter, out_sr=3857,order_by_fields="location_timestamp DESC")
+        intersect_features = tracks_layer.query(where=tracks_query, geometry_filter=intersect_filter, out_sr=3857, order_by_fields="location_timestamp ASC")
         if len(intersect_features) > 0:
-            start_date = pendulum.from_timestamp(int(intersect_features.features[0].attributes["location_timestamp"])/1000)
-            end_date = pendulum.from_timestamp(int(intersect_features.features[-1].attributes["location_timestamp"])/1000)
+            start_date = None
+            end_date = None
+            for i_feature in intersect_features:
+                if start_date is None:
+                    start_date = pendulum.from_timestamp((i_feature.attributes["location_timestamp"])/1000)
+                last_end_date = end_date
+                end_date = pendulum.from_timestamp((i_feature.attributes["location_timestamp"])/1000)
+                if end_date.diff(last_end_date).in_seconds() > 120 and start_date is not end_date:
+                    logger.info("")
+        else:
+            logger.info("No tracks found matching your query!")
 
 
 if __name__ == "__main__":
