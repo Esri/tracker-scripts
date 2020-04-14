@@ -17,7 +17,7 @@ Other than the authentication arguments (username, password, org) the script use
 - --symmetric-difference <symmetric_difference> - A parameter when provided, deletes features that fall outside the polygons. If not provided, delete track points inside the polygons. 
 
 Example Usage 1
-```python
+```bash
 python polygon_cleanup_tracks.py -u username -p password -org https://arcgis.com --symmetric-difference -where 'OBJECTID > 6' -layer-url https://services.arcgis.com/a910db6b36ff4066a3d4131fccc3da9b/arcgis/rest/services/polygons_ad9af2fc00314fa79ce79ec7d7317acc/FeatureServer/0
 ```
 
