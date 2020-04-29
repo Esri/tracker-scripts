@@ -8,6 +8,7 @@ Several example Jupyter notebooks and scripts are provided to demonstrate some m
 Notebooks:
 - [Quickstart Guide](notebooks/examples/Quickstart%20Guide.ipynb)
 - [Basic Track Analysis](notebooks/examples/Basic%20Track%20Analysis.ipynb)
+- [Basic Track Analysis - PySpark](notebooks/examples/Basic%20Track%20Analysis%20-%20Pyspark.ipynb)
 - [Location Tracking Status](notebooks/examples/Location%20Tracking%20Status.ipynb)
 - [Creating Track Lines](notebooks/examples/Create%20Track%20Lines%20From%20Points.ipynb)
 - [Visualize Route Deviance](notebooks/examples/Visualize%20Route%20Deviance.ipynb)
