@@ -15,6 +15,7 @@ Notebooks:
 - [Identify Inspected Buildings](notebooks/examples/Identify%20Inspected%20Buildings.ipynb)
 - [Find Dwell Times at Polygons](notebooks/examples/Find%20Dwell%20Times%20at%20Polygons.ipynb)
 - [Proximity Tracing](notebooks/examples/Proximity%20Tracing.ipynb)
+- [Create an Aggregated Map Service](notebooks/examples/Create%20an%20Aggregated%20Map%20Service.ipynb)
 
 Scripts:
 - [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
