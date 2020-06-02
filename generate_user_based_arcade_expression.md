@@ -1,6 +1,6 @@
 ## Generate a user-based arcade expression
 
-This script can generate a simple Arcade Expression that can be used when visualizing track or LKL data in a map. It takes a CSV file and at least two columns (username, category) and it wil generate an expression to use in a map.
+This script can generate a simple Arcade Expression that can be used when visualizing track or LKL data in a map. It takes a CSV file and at least two columns (username, category) and it will generate an expression to use in a map.
 
 The expression can be used as part of the layer symbology or as part of a popup configuration to display additional information about the tracked user.
 

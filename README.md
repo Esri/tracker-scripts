@@ -21,7 +21,7 @@ Scripts:
 - [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
 - [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](mirror_lkl_layer.md)
 - [Polygon Cleanup Tracks](scripts/polygon_cleanup_tracks.py) - [README here](polygon_cleanup_tracks.md)
-- [Generate User-based Arcade Expression](scripts/generate_users_arcade_expression.py) - [README here](generate_user_based-arcade_expression.md)
+- [Generate User-based Arcade Expression](scripts/generate_users_arcade_expression.py) - [README here](generate_user_based_arcade_expression.md)
 
 
 ### Instructions
