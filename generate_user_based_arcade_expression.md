@@ -2,7 +2,29 @@
 
 This script can generate a simple Arcade Expression that can be used when visualizing track or LKL data in a map. It takes a CSV file and at least two columns (usernames, category) and it wil generate an expression to use in a map.
 
+The expression can be used as part of the layer symbology or as part of a popup configuration to display additional information about the tracked user.
+
 Supports Python 3.6+
+
+Example Input CSV:
+
+| username | category    |
+|----------|-------------|
+| user1    | Medic       |
+| user2    | Firefighter |
+
+Resulting Output:
+```
+if ($feature.created_user == 'user1') {
+    return 'Medic'
+}
+
+else if ($feature.created_user == 'user2') {
+    return 'Firefighter'
+}
+
+return ''
+```
 
 ----
 
@@ -35,17 +57,4 @@ python --file users.csv --file users.csv --username-column usernames --other-col
 
  1. Reads the provided CSV file
  2. Generates an if/else if based arcade expression like:
- ```
-
-if ($feature.created_user == 'username1') {
-    return 'Fire Fighter'
-}
-
-else if ($feature.created_user == 'username2') {
-    return 'Police Officer'
-}
-
-return ''
-
-```
-3. Prints the expression
+ 3. Prints the expression
