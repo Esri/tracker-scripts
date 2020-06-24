@@ -35,22 +35,22 @@ The script uses these arguments:
 
 Example Usage 1 - Printing to console
 ```bash
-python --file users.csv --username-column usernames --other-column category
+python generate_users_arcade_expression.py --file users.csv --username-column usernames --other-column category
 ```
 
 Example Usage 2 - Direct to file
 ```bash
-python --file users.csv --file users.csv --username-column usernames --other-column category > output.txt
+python generate_users_arcade_expression.py --file users.csv --file users.csv --username-column usernames --other-column category > output.txt
 ```
 
 Example Usage 3 - Direct to Clipboard on Mac
 ```bash
-python --file users.csv --file users.csv --username-column usernames --other-column category | pbcopy
+python generate_users_arcade_expression.py --file users.csv --file users.csv --username-column usernames --other-column category | pbcopy
 ```
 
 Example Usage 4 - Direct to Clipboard on Windows
 ```bash
-python --file users.csv --file users.csv --username-column usernames --other-column category | CLIP
+python generate_users_arcade_expression.py --file users.csv --file users.csv --username-column usernames --other-column category | CLIP
 ```
 
 ## What it does
