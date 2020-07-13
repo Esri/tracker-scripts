@@ -17,6 +17,8 @@ Notebooks:
 - [Proximity Tracing](notebooks/examples/Proximity%20Tracing.ipynb)
 - [Create an Aggregated Map Service](notebooks/examples/Create%20an%20Aggregated%20Map%20Service.ipynb)
 
+In addition, we have uploaded our AGOL-compatible notebooks into a publicly accessible [group of Hosted Notebooks in ArcGIS Online](https://www.arcgis.com/home/group.html?id=0bfc8729753f419b82365200fc09b076#overview)
+
 Scripts:
 - [Check Edit Location](scripts/check_edit_location.py) - [README here](check_edit_location.md)
 - [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](mirror_lkl_layer.md)
@@ -26,11 +28,18 @@ Scripts:
 
 ### Instructions
 
+To run locally:
 1. Install [Anaconda](https://www.anaconda.com/distribution)
 2. Run `conda env create --file environment.yml` to create the virtual environment with the correct dependencies
 3. Run `conda activate tracker-scripts` to activate the environment
 4. Start the jupyter server using `jupyter notebook` or run the Python script from command line
 5. Open the notebook, modify it, and then it run it
+
+To run in ArcGIS Notebooks:
+1. Visit our [AGOL Hosted Notebooks group](https://www.arcgis.com/home/group.html?id=0bfc8729753f419b82365200fc09b076#overview)
+2. Click on "Content"
+3. Choose a notebook you'd like
+4. Click on the thumbnail for "Open Notebook" to open the Notebook in ArcGIS Notebooks
 
 ### Requirements
 - [Anaconda](https://www.anaconda.com/distribution) must be installed
