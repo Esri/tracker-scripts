@@ -34,7 +34,7 @@ def main(args):
                     return '{row[args.other_column].strip()}'
                 }}
                 """)
-        expression += textwrap.dedent(f"""
+        expression += textwrap.dedent("""
         return ''
         """)
     print(expression)
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Generates an Arcade expression using a CSV file.")
     parser.add_argument('--file', '-f', dest='file', help="The file to open", required=True)
     parser.add_argument('--username-column', dest='username_column', help="The name of the column containing the usernames", default="username")
-    parser.add_argument('--other-column', dest='other_column', help="The name of the other column containing the names, categories, or other strings.", default="category")
+    parser.add_argument('--other-column', dest='other_column', help="The name of the other column containing the names, categories, or other strings.",
+                        default="category")
     args = parser.parse_args()
     main(args)

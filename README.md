@@ -34,6 +34,8 @@ To run locally:
 3. Run `conda activate tracker-scripts` to activate the environment
 4. Start the jupyter server using `jupyter notebook` or run the Python script from command line
 5. Open the notebook, modify it, and then it run it
+6. (Optional - dev only) Configure pre-commit to run flake8 linting on pushes
+   * `pre-commit install --hook-type pre-push`
 
 To run in ArcGIS Notebooks:
 1. Visit our [AGOL Hosted Notebooks group](https://www.arcgis.com/home/group.html?id=0bfc8729753f419b82365200fc09b076#overview)

@@ -55,7 +55,8 @@ def form_donut(rings):
     for ring in rings:
         ring.reverse()
     # append the max extent as the clockwise outside ring
-    rings.append([[-20037508.3427892, -20037508.3427892], [-20037508.3427892, 20037508.3427892], [20037508.3427892, 20037508.3427892], [20037508.3427892, -20037508.3427892], [-20037508.3427892, -20037508.3427892]])
+    rings.append([[-20037508.3427892, -20037508.3427892], [-20037508.3427892, 20037508.3427892], [20037508.3427892, 20037508.3427892],
+                  [20037508.3427892, -20037508.3427892], [-20037508.3427892, -20037508.3427892]])
     return rings
 
 
@@ -69,7 +70,7 @@ def main(arguments):
               username=arguments.username,
               password=arguments.password,
               verify_cert=not arguments.skip_ssl_verification)
-    
+
     logger.info("Getting location tracking service")
     try:
         tracks_layer = gis.admin.location_tracking.tracks_layer
@@ -77,21 +78,21 @@ def main(arguments):
         logger.info(e)
         logger.info("Getting location tracking service failed - check that you are an admin and that location tracking is enabled for your organization")
         sys.exit(0)
-    
+
     logger.info("Getting polygon layer")
     try:
         layer = FeatureLayer(url=args.layer_url, gis=gis)
-        json = layer._lyr_json
+        _ = layer._lyr_json
     except Exception as e:
         logger.info(e)
         logger.info("Layer could not be found based on given input. Please check your parameters again. Exiting the script")
         sys.exit(0)
-    
+
     features = layer.query(where=args.where, out_sr=3857).features
     if len(features) > 0:
         geometries = [feature.geometry for feature in features]
         logger.info("Unifying geometry data")
-        union_geometry = geometry.union(spatial_ref=3857,geometries=geometries,gis=gis)
+        union_geometry = geometry.union(spatial_ref=3857, geometries=geometries, gis=gis)
         if args.symmetric_difference:
             union_geometry['rings'] = form_donut(union_geometry['rings'])
         intersect_filter = geometry.filters.intersects(union_geometry, sr=3857)
@@ -100,8 +101,8 @@ def main(arguments):
         logger.info("Deleting features")
         logger.info("Deleted: " + str(len(x['deleteResults'])) + " tracks")
         logger.info("Completed!")
-    
-    
+
+
 if __name__ == "__main__":
     # Get all of the commandline arguments
     parser = argparse.ArgumentParser(
@@ -114,7 +115,8 @@ if __name__ == "__main__":
                         help="The feature service URL for your layer with the geometry you want to use to delete track points",
                         required=True)
     parser.add_argument('-where', dest='where', help="Query conditions for polygons you want to use in your cleanup. Defaults to all (1=1)", default="1=1")
-    parser.add_argument('--symmetric-difference', action='store_true', dest='symmetric_difference', help="If provided, delete the tracks outside the polygon(s). If not provided, delete the tracks inside the polygon")
+    parser.add_argument('--symmetric-difference', action='store_true', dest='symmetric_difference',
+                        help="If provided, delete the tracks outside the polygon(s). If not provided, delete the tracks inside the polygon")
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
