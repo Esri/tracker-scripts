@@ -52,10 +52,10 @@ def initialize_logging(log_file=None):
 
 def return_field_name(layer, name_to_check):
     for field in layer.properties.fields:
-        if field['name'].replace("_","").lower() == name_to_check.replace("_","").lower():
+        if field['name'].replace("_", "").lower() == name_to_check.replace("_", "").lower():
             return field['name']
-        
-        
+
+
 def main(arguments):
     # initialize logger
     logger = initialize_logging(arguments.log_file)
@@ -66,7 +66,7 @@ def main(arguments):
               username=arguments.username,
               password=arguments.password,
               verify_cert=not arguments.skip_ssl_verification)
-    
+
     # Get the feature layer
     if gis.content.get(arguments.item_id):
         logger.info("Getting feature layer")
@@ -77,14 +77,14 @@ def main(arguments):
         else:
             logger.info("Please pass an LKL layer url!")
             sys.exit(0)
-            
+
         # Query LKL and mirror layer
         lkl_fset = lkl_layer.query('1=1', out_sr=3857)
         if len(lkl_fset) == 0:
             logger.info("No LKLs in your layer yet!")
             sys.exit(0)
         mirror_fset = mirror_layer.query('1=1', out_sr=3857)
-        
+
         add_features = []
         update_features = []
         logger.info("Iterating through current LKL data")
@@ -96,17 +96,18 @@ def main(arguments):
                     break
             else:
                 add_features.append(feature)
-                
+
         logger.info("Posting updated data to mirrored layer")
         mirror_layer.edit_features(adds=add_features, updates=update_features, use_global_ids=True)
         logger.info("Completed!")
     else:
         logger.info("Item not found")
-        
+
 
 if __name__ == "__main__":
     # Get all of the commandline arguments
-    parser = argparse.ArgumentParser("Python script which maintains an exact replica of your LKL layer in a separate feature service, so that data can be joined")
+    parser = argparse.ArgumentParser("Python script which maintains an exact replica of your LKL layer "
+                                     "in a separate feature service, so that data can be joined")
     parser.add_argument('-u', dest='username', help="The username to authenticate with", required=True)
     parser.add_argument('-p', dest='password', help="The password to authenticate with", required=True)
     parser.add_argument('-org', dest='org_url', help="The url of the org/portal to use", required=True)
@@ -114,7 +115,8 @@ if __name__ == "__main__":
     parser.add_argument('-item-id', dest='item_id', required=True,
                         help="The item id of the layer you want the tracks to mirror to")
     parser.add_argument('-lkl-layer-url', dest='lkl_layer_url', required=True,
-                        help="The last known location (LKL) layer (either location tracking service or tracks view) you'd like to use. This URL should end in /1")
+                        help="The last known location (LKL) layer (either location tracking service or tracks view) you'd like to use. "
+                             "This URL should end in /1")
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
