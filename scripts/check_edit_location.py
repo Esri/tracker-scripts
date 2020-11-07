@@ -9,7 +9,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.​
-   
+
     This sample reports work orders (assignments, features, surveys) that were edited or created while the user was not close by using Tracker data
     You must be an admin in your organization to use this script
 """
@@ -55,7 +55,7 @@ def initialize_logging(log_file=None):
 
 def return_field_name(layer, name_to_check):
     for field in layer.properties.fields:
-        if field['name'].replace("_","").lower() == name_to_check.replace("_","").lower():
+        if field['name'].replace("_", "").lower() == name_to_check.replace("_", "").lower():
             return field['name']
 
 
@@ -82,17 +82,17 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
     if len(features_df.index) == 0:
         logger.info("No features found to check. Please check the user_id's that you have passed")
         sys.exit(0)
-    
+
     # buffer features to use as geometry filter
     features_df["BUFFERED"] = features_df["SHAPE"].geom.buffer(dist_tolerance + min_accuracy)
     features_df.spatial.set_geometry("BUFFERED")
     features_df.spatial.sr = sr
-    
+
     # Set field names
     accuracy_field = "horizontal_accuracy"
     creator_field = "created_user"
     timestamp_field = "location_timestamp"
-    
+
     # Find invalid features
     invalid_features = []
     logger.info("Finding invalid features")
@@ -108,25 +108,26 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
             logger.info("Check that the exact field name exists in the feature layer")
             logger.info(e)
             sys.exit(0)
-        
+
         # Add/Subtract some minutes to give a little leeway
         start_date = date_to_check - datetime.timedelta(minutes=time_tolerance)
         end_date = date_to_check + datetime.timedelta(minutes=time_tolerance)
-        
+
         # Check there are actually tracks in your LTS in that time period. Otherwise, go to next feature
         check_track_query = f"{timestamp_field} < timestamp '{end_date.strftime('%Y-%m-%d %H:%M:%S')}'"
         check_tracks = tracks_layer.query(where=check_track_query, return_count_only=True)
         if check_tracks == 0:
-            logger.info("For this feature, no tracks exist for the time period in your LTS. Ensure that tracks have been retained for the time period you're verifying")
+            logger.info("For this feature, no tracks exist for the time period in your LTS. "
+                        "Ensure that tracks have been retained for the time period you're verifying")
             continue
-            
+
         # Check worker has tracks for that time period
         check_worker_tracks_query = f"{timestamp_field} < timestamp '{end_date.strftime('%Y-%m-%d %H:%M:%S')}' AND {creator_field} = '{row[editor_field]}' "
         check_worker_tracks = tracks_layer.query(where=check_worker_tracks_query, return_count_only=True)
         if check_worker_tracks == 0:
             logger.info(f"The worker {row[editor_field]} who edited the feature {row[object_id_field]} does not have tracks for this time period")
             continue
-        
+
         # Make a query string to select location by the worker during the time period
         loc_query_string = f"{creator_field} = '{row[editor_field]}' " \
             f"AND {timestamp_field} >= timestamp '{start_date.strftime('%Y-%m-%d %H:%M:%S')}' " \
@@ -166,7 +167,7 @@ def main(arguments):
             logger.info(e)
             logger.info("Getting location tracking service failed - check that you are an admin and that location tracking is enabled for your organization")
             sys.exit(0)
-        
+
     # Return invalid work orders
     workers = arguments.workers.replace(" ", "").split(",")
     invalid_work_orders = get_invalid_work_orders(layer,
@@ -181,9 +182,10 @@ def main(arguments):
         logger.info("No features found that match the criteria you've set")
     else:
         for work_order in invalid_work_orders:
-            logger.info(f"The user {work_order[0]} who last edited the feature with OBJECTID {work_order[1]} was potentially not within the distance tolerance when updating the field {arguments.field_name}")
+            logger.info(f"The user {work_order[0]} who last edited the feature with OBJECTID {work_order[1]} was potentially "
+                        f"not within the distance tolerance when updating the field {arguments.field_name}")
 
-    
+
 if __name__ == "__main__":
     # Get all of the commandline arguments
     parser = argparse.ArgumentParser("Check that the worker was nearby when editing features")
@@ -193,7 +195,8 @@ if __name__ == "__main__":
     # Parameters for tracker
     parser.add_argument('-workers', dest='workers', help="Comma separated list of user_id's for the workers to check")
     parser.add_argument('-field-name', dest='field_name', default="EditDate",
-                        help="The date field name within the feature layer you use to integrate with Tracker. Use actual field name, not alias. Default is EditDate (for AGOL)")
+                        help="The date field name within the feature layer you use to integrate with Tracker. "
+                             "Use actual field name, not alias. Default is EditDate (for AGOL)")
     parser.add_argument('-layer-url', dest='layer_url',
                         help="The feature service URL for your Survey, Collector, or Workforce assignments feature layer with features to be verified",
                         required=True)
@@ -205,7 +208,8 @@ if __name__ == "__main__":
     parser.add_argument('-min-accuracy', dest='min_accuracy', default=50,
                         help="The minimum accuracy to use (in meters)")
     parser.add_argument('-tracks-layer-url', dest='tracks_layer_url', default=None,
-                        help="The tracks layer (either location tracking service or tracks view) you'd like to use. Defaults to the Location Tracking Service tracks layer")
+                        help="The tracks layer (either location tracking service or tracks view) you'd like to use. "
+                             "Defaults to the Location Tracking Service tracks layer")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
                         action='store_true',
