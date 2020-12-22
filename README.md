@@ -20,10 +20,10 @@ Notebooks:
 In addition, we have uploaded our AGOL-compatible notebooks into a publicly accessible [group of Hosted Notebooks in ArcGIS Online](https://www.arcgis.com/home/group.html?id=0bfc8729753f419b82365200fc09b076#overview)
 
 Scripts:
-- [Check Edit Location](scripts/check_edit_location.py) - [README here](markdown/check_edit_location.md)
-- [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](markdown/mirror_lkl_layer.md)
-- [Polygon Cleanup Tracks](scripts/polygon_cleanup_tracks.py) - [README here](markdown/polygon_cleanup_tracks.md)
-- [Generate Users Arcade Expression](scripts/generate_users_arcade_expression.py) - [README here](markdown/generate_users_arcade_expression.md)
+- [Check Edit Location](scripts/check_edit_location.py) - [README here](readmes/check_edit_location.md)
+- [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](readmes/mirror_lkl_layer.md)
+- [Polygon Cleanup Tracks](scripts/polygon_cleanup_tracks.py) - [README here](readmes/polygon_cleanup_tracks.md)
+- [Generate Users Arcade Expression](scripts/generate_users_arcade_expression.py) - [README here](readmes/generate_users_arcade_expression.md)
 
 
 ### Instructions
