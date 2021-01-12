@@ -68,7 +68,8 @@ def main(arguments):
     start_date = pendulum.today(args.time_zone) - datetime.timedelta(days=args.track_age)
     end_date = pendulum.today(args.time_zone).at(23, 59, 59) - datetime.timedelta(days=1)
     # Export the tracks
-    csv_item = tracks_item.export(f"tracks_{start_date.to_date_string()}_{end_date.to_date_string()}",
+    name = f"tracks_{start_date.to_date_string()}_{end_date.to_date_string()}"
+    csv_item = tracks_item.export(name,
                                   export_format='CSV',
                                   parameters={
                                       "layers": [
@@ -82,9 +83,8 @@ def main(arguments):
                                   )
     logger.info("Downloading...")
     # Download the CSV file
-    save_path = os.path.dirname(os.path.abspath(args.output_file))
-    file_name = os.path.basename(args.output_file)
-    csv_item.download(save_path=save_path, file_name=file_name)
+    save_path = os.path.abspath(args.output_directory)
+    csv_item.download(save_path=save_path, file_name=f"{name}.csv")
     # Delete the hosted CSV file
     csv_item.delete()
     logger.info("Complete")
@@ -101,7 +101,7 @@ if __name__ == "__main__":
                         required=True)
     parser.add_argument('-track-age', dest='track_age', type=int, help="Number of previous full days of tracks to export", default=1)
     parser.add_argument('-time-zone', dest='time_zone', help="The timezone to use", default='UTC')
-    parser.add_argument('-output-file', dest='output_file', help="The file to create", required=True)
+    parser.add_argument('-output-directory', dest='output_directory', help="The file to create", required=True)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
