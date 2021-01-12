@@ -101,7 +101,7 @@ if __name__ == "__main__":
                         required=True)
     parser.add_argument('-track-age', dest='track_age', type=int, help="Number of previous full days of tracks to export", default=1)
     parser.add_argument('-time-zone', dest='time_zone', help="The timezone to use", default='UTC')
-    parser.add_argument('-output-directory', dest='output_directory', help="The file to create", required=True)
+    parser.add_argument('-output-directory', dest='output_directory', help="The directory where the exported file will be stored", required=True)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
     parser.add_argument('--skip-ssl-verification',
                         dest='skip_ssl_verification',
