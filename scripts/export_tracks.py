@@ -99,7 +99,7 @@ if __name__ == "__main__":
     parser.add_argument('-track-item', dest='tracks_item',
                         help="The location tracking service or track view item to export",
                         required=True)
-    parser.add_argument('-track-age', dest='track_age', type=int, help="Number of previous days of tracks to export", default=1)
+    parser.add_argument('-track-age', dest='track_age', type=int, help="Number of previous full days of tracks to export", default=1)
     parser.add_argument('-time-zone', dest='time_zone', help="The timezone to use", default='UTC')
     parser.add_argument('-output-file', dest='output_file', help="The file to create", required=True)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
