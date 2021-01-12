@@ -57,8 +57,7 @@ def main(arguments):
     # Authenticate to ArcGIS Online
     gis = GIS(arguments.org_url,
               username=arguments.username,
-              password=arguments.password,
-              verify_cert=not arguments.skip_ssl_verification)
+              password=arguments.password)
     if gis.properties['isPortal']:
         raise Exception("Export is not supported for the location tracking service with ArcGIS Enterprise")
     logger.info("Exporting...")
@@ -93,8 +92,8 @@ def main(arguments):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         "This exports tracks from a track view or location tracking service hosted in AGOL")
-    parser.add_argument('-u', dest='username', help="The username to authenticate with", required=True)
-    parser.add_argument('-p', dest='password', help="The password to authenticate with", required=True)
+    parser.add_argument('-username', dest='username', help="The username to authenticate with", required=True)
+    parser.add_argument('-password', dest='password', help="The password to authenticate with", required=True)
     parser.add_argument('-org', dest='org_url', help="The url of the org/portal to use", default="https://arcgis.com")
     parser.add_argument('-track-item', dest='tracks_item',
                         help="The location tracking service or track view item to export",
@@ -103,10 +102,6 @@ if __name__ == "__main__":
     parser.add_argument('-time-zone', dest='time_zone', help="The timezone to use", default='UTC')
     parser.add_argument('-output-directory', dest='output_directory', help="The directory where the exported file will be stored", required=True)
     parser.add_argument('-log-file', dest='log_file', help="The log file to write to (optional)")
-    parser.add_argument('--skip-ssl-verification',
-                        dest='skip_ssl_verification',
-                        action='store_true',
-                        help="Verify the SSL Certificate of the server")
     args = parser.parse_args()
     try:
         main(args)
