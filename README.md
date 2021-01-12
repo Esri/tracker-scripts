@@ -24,6 +24,7 @@ Scripts:
 - [Mirror LKL Layer](scripts/mirror_lkl_layer.py) - [README here](readmes/mirror_lkl_layer.md)
 - [Polygon Cleanup Tracks](scripts/polygon_cleanup_tracks.py) - [README here](readmes/polygon_cleanup_tracks.md)
 - [Generate Users Arcade Expression](scripts/generate_users_arcade_expression.py) - [README here](readmes/generate_users_arcade_expression.md)
+- [Export Tracks From AGOL](scripts/export_tracks.py) - [README here](readmes/export_tracks.md)
 
 
 ### Instructions
