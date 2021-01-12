@@ -53,6 +53,9 @@ def initialize_logging(log_file=None):
 
 def main(arguments):
     logger = initialize_logging(arguments.log_file)
+    save_path = os.path.abspath(args.output_directory)
+    if not os.path.isdir(save_path):
+        raise Exception(f"Invalid directory: {save_path}")
     logger.info("Authenticating...")
     # Authenticate to ArcGIS Online
     gis = GIS(arguments.org_url,
@@ -62,6 +65,8 @@ def main(arguments):
         raise Exception("Export is not supported for the location tracking service with ArcGIS Enterprise")
     logger.info("Exporting...")
     tracks_item = gis.content.get(args.tracks_item)
+    if tracks_item is None:
+        raise Exception(f"Unable to get item id: {args.tracks_item}")
     # Create date range using track age
     # Always export up through the last full day (intentionally excludes part of current day)
     start_date = pendulum.today(args.time_zone) - datetime.timedelta(days=args.track_age)
@@ -82,7 +87,6 @@ def main(arguments):
                                   )
     logger.info("Downloading...")
     # Download the CSV file
-    save_path = os.path.abspath(args.output_directory)
     csv_item.download(save_path=save_path, file_name=f"{name}.csv")
     # Delete the hosted CSV file
     csv_item.delete()
