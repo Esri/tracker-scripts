@@ -84,7 +84,10 @@ def get_invalid_work_orders(layer, field_name, time_tolerance, dist_tolerance, m
         sys.exit(0)
 
     # buffer features to use as geometry filter
-    features_df["BUFFERED"] = features_df["SHAPE"].geom.buffer(dist_tolerance + min_accuracy)
+    # Use the geometry service instead of the local geometry engine because there is a bug in the Python API
+    # when using a shapely geometry as a filter
+    buffered_geometries = arcgis.geometry.buffer(features_df["SHAPE"].tolist(), in_sr=sr, distances=dist_tolerance + min_accuracy, unit=9001)
+    features_df["BUFFERED"] = buffered_geometries
     features_df.spatial.set_geometry("BUFFERED")
     features_df.spatial.sr = sr
 
