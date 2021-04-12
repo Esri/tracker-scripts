@@ -70,6 +70,9 @@ def main(arguments):
               username=arguments.username,
               password=arguments.password,
               verify_cert=not arguments.skip_ssl_verification)
+    if not gis.properties.isPortal:
+        logger.error("This script only works with ArcGIS Enterprise")
+        sys.exit(0)
 
     logger.info("Getting location tracking service")
     try:

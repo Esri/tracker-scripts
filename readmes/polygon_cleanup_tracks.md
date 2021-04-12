@@ -6,6 +6,8 @@ By default, this script will delete the tracks found inside the polygons. Howeve
 
 Location Tracking must be enabled for your organization to use this script. You must be an admin to use this script. 
 
+This script only works with ArcGIS Enterprise.
+
 Supports Python 3.6+
 
 ----
